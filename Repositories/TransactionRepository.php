@@ -111,4 +111,43 @@ class TransactionRepository implements ITransactionRepository
         $stmt = $this->db->prepare("DELETE FROM transactions WHERE id = :id");
         return $stmt->execute(['id' => $id]);
     }
+
+    public function getPaginatedByUserId(int $userId, int $limit, int $offset): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM transactions WHERE user_id = :user_id ORDER BY date DESC LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll();
+
+        return array_map(fn($row) => new Transaction(
+            $row['user_id'],
+            $row['source_id'],
+            $row['category_id'],
+            $row['amount'],
+            $row['comment'],
+            $row['date'],
+            $row['id']
+        ), $rows);
+    }
+
+    public function getPaginatedAll(int $limit, int $offset): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM transactions ORDER BY date DESC LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll();
+
+        return array_map(fn($row) => new Transaction(
+            $row['user_id'],
+            $row['source_id'],
+            $row['category_id'],
+            $row['amount'],
+            $row['comment'],
+            $row['date'],
+            $row['id']
+        ), $rows);
+    }
 }

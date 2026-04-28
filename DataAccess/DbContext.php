@@ -17,8 +17,8 @@ class DbContext
     {
         if (self::$connection === null) {
             
-            $host = 'localhost'; 
-            $dbName = 'financial_planner_db';
+            $host = 'localhost';
+            $dbName = 'financial_planner';
             $username = 'root';
             $password = ''; 
 

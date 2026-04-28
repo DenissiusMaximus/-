@@ -11,8 +11,6 @@ class NotFoundMiddleware extends AbstractMiddleware
 {
     public function handle(Request $request): Response
     {
-        $html = "<h1>404 Error</h1>";
-        
-        return new Response($html, 404);
+        return Response::redirect('/');
     }
 }

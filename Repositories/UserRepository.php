@@ -47,6 +47,23 @@ class UserRepository implements IUserRepository
         );
     }
 
+    public function findByEmail(string $email): ?User
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->execute(['email' => $email]);
+        $row = $stmt->fetch();
+
+        if (!$row) return null;
+
+        return new User(
+            $row['name'],
+            $row['email'],
+            $row['password_hash'],
+            $row['role'],
+            $row['id']
+        );
+    }
+
     public function create(User $user): int
     {
         $stmt = $this->db->prepare(

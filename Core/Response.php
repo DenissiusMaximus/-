@@ -49,7 +49,14 @@ class Response
 
     public static function redirect(string $url): self
     {
-        return new self('', 302, ['Location' => $url]);
+        $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+        
+        $normalizedBase = rtrim($scriptDir, '/');
+        $normalizedUrl = ltrim($url, '/');
+        
+        $finalUrl = $normalizedBase . '/' . $normalizedUrl;
+
+        return new self('', 302, ['Location' => $finalUrl]);
     }
 
     public function send(): void
