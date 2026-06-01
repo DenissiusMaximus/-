@@ -24,7 +24,12 @@ class UserController extends ControllerBase
         $userId = $request->user->id ?? 0;
         $role = $request->user->role ?? 'user';
 
-        $users = $role === 'admin' ? $this->repo->findAll() : [$this->repo->findById($userId)];
+
+        if ($role !== 'admin') {
+            return $this->redirect('/users/edit/' . $userId);
+        }
+
+        $users = $this->repo->findAll();
 
         return $this->view('users/index', [
             'title' => 'Користувачі',
@@ -71,6 +76,7 @@ class UserController extends ControllerBase
         return $this->view('users/edit', [
             'title' => 'Редагувати користувача',
             'user' => $this->repo->findById($id),
+            'currentUser' => $request->user,
         ]);
     }
 
@@ -85,11 +91,17 @@ class UserController extends ControllerBase
         $password = $request->post('password');
         $hash = $password ? password_hash($password, PASSWORD_BCRYPT) : $existing->password_hash;
 
+        // Only admins can change roles. For non-admins, preserve the existing role.
+        $role = $existing->role;
+        if ($request->user->role === 'admin') {
+            $role = $request->post('role', $existing->role);
+        }
+
         $this->repo->update(new User(
             name: $request->post('name'),
             email: $request->post('email'),
             password_hash: $hash,
-            role: $request->post('role', 'user'),
+            role: $role,
             id: $id,
         ));
 

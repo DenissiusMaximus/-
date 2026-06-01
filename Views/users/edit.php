@@ -23,10 +23,14 @@
 
         <div>
             <label class="block text-sm text-gray-600 mb-1">Роль</label>
+            <?php if (isset($currentUser) && $currentUser->role === 'admin'): ?>
             <select name="role" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
                 <option value="user" <?= $user->role === 'user' ? 'selected' : '' ?>>user</option>
                 <option value="admin" <?= $user->role === 'admin' ? 'selected' : '' ?>>admin</option>
             </select>
+            <?php else: ?>
+            <div class="w-full border border-gray-200 rounded px-3 py-2 text-sm bg-gray-50 text-gray-700"><?= htmlspecialchars($user->role) ?></div>
+            <?php endif; ?>
         </div>
 
         <div class="flex gap-3 pt-2">
